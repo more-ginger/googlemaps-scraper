@@ -8,8 +8,10 @@ import time
 
 
 ind = {'most_relevant' : 0 , 'newest' : 1, 'highest_rating' : 2, 'lowest_rating' : 3 }
-HEADER = ['id_review', 'caption', 'relative_date', 'retrieval_date', 'rating', 'username', 'n_review_user', 'n_photo_user', 'url_user']
-HEADER_W_SOURCE = ['id_review', 'caption', 'relative_date','retrieval_date', 'rating', 'username', 'n_review_user', 'n_photo_user', 'url_user', 'url_source']
+HEADER = ['id_review', 'caption', 'img_links', 'relative_date', 'retrieval_date',
+          'rating', 'username', 'user_pic_url', 'n_review_user', 'n_photo_user', 'url_user']
+HEADER_W_SOURCE = ['id_review', 'caption', 'img_links', 'relative_date', 'retrieval_date',
+                   'rating', 'username', 'user_pic_url', 'n_review_user', 'n_photo_user', 'url_user', 'url_source']
 
 def csv_writer(source_field, ind_sort_by, path='data/'):
     outfile= ind_sort_by + '_gm_reviews.csv'

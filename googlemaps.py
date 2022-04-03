@@ -17,6 +17,8 @@ import logging
 import traceback
 import numpy as np
 import itertools
+import cssutils
+import logging;cssutils.log.setLevel(logging.CRITICAL)
 
 
 GM_WEBPAGE = 'https://www.google.com/maps/'
@@ -205,6 +207,21 @@ class GoogleMapsScraper:
 
         id_review = review.find('button', class_='ODSEW-ShBeI-JIbuQc-menu ODSEW-ShBeI-JIbuQc-menu-SfQLQb-title')['data-review-id']
         username = review.find('div', class_='ODSEW-ShBeI-title').find('span').text
+        img_links = []
+        # find url for images in comments
+        try: 
+            # get html
+            img_styles = review.find_all('button', class_='ODSEW-ShBeI-xJzy8c')
+            # parse individual elements
+            for img in img_styles:
+                style_string = img['style']
+                style = cssutils.parseStyle(style_string)
+                url = style['background-image']
+                img_link = url.replace('url(', '').replace(')', '')
+                img_links.append(img_link)
+       
+        except Exception as e:
+            img_link = None
 
         try:
             review_text = self.__filter_string(review.find('span', class_='ODSEW-ShBeI-text').text)
@@ -230,9 +247,12 @@ class GoogleMapsScraper:
             n_photos = 0
 
         user_url = review.find('a')['href']
+        user_pic = review.find('a').find('img')
+        pic_url = user_pic['src']
 
         item['id_review'] = id_review
         item['caption'] = review_text
+        item['img_links'] = img_links
 
         # depends on language, which depends on geolocation defined by Google Maps
         # custom mapping to transform into date shuold be implemented
@@ -243,6 +263,7 @@ class GoogleMapsScraper:
         item['retrieval_date'] = datetime.now()
         item['rating'] = rating
         item['username'] = username
+        item['user_pic_url'] = pic_url
         item['n_review_user'] = n_reviews
         item['n_photo_user'] = n_photos
         item['url_user'] = user_url
